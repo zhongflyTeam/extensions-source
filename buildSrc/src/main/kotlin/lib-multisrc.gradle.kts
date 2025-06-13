@@ -1,17 +1,10 @@
 plugins {
-    id("com.android.library")
-    kotlin("android")
-    id("kotlinx-serialization")
-    id("org.jmailen.kotlinter")
+    id("keiyoushi.android.library")
+    id("keiyoushi.kotlin")
+    id("keiyoushi.lint")
 }
 
 android {
-    compileSdk = AndroidConfig.compileSdk
-
-    defaultConfig {
-        minSdk = AndroidConfig.minSdk
-    }
-
     namespace = "eu.kanade.tachiyomi.multisrc.${project.name}"
 
     sourceSets {
@@ -22,35 +15,11 @@ android {
             assets.setSrcDirs(listOf("assets"))
         }
     }
-
-    kotlinOptions {
-        freeCompilerArgs += "-opt-in=kotlinx.serialization.ExperimentalSerializationApi"
-    }
-}
-
-kotlinter {
-    experimentalRules = true
-    disabledRules = arrayOf(
-        "experimental:argument-list-wrapping", // Doesn't play well with Android Studio
-        "experimental:comment-wrapping",
-    )
 }
 
 dependencies {
     compileOnly(versionCatalogs.named("libs").findBundle("common").get())
     implementation(project(":core"))
-}
-
-tasks {
-    preBuild {
-        dependsOn(lintKotlin)
-    }
-
-    if (System.getenv("CI") != "true") {
-        lintKotlin {
-            dependsOn(formatKotlin)
-        }
-    }
 }
 
 tasks.register("printDependentExtensions") {
